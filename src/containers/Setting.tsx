@@ -1,14 +1,13 @@
-import React, { useState, useEffect, useContext, useRef } from "react";
-import { queryContext } from "../contexts/QueryContext";
-import { createStyles, Theme, makeStyles } from "@material-ui/core/styles";
 import Fab from "@material-ui/core/Fab";
-import CloseIcon from "@material-ui/icons/Close";
 import Slider from "@material-ui/core/Slider";
-import { DropzoneArea } from "material-ui-dropzone";
-import { baseColor } from "../utils/color";
-import Logo from "./Logo.svg";
-import { delayRunFunc } from "../utils/Helper";
+import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
+import CloseIcon from "@material-ui/icons/Close";
+import { DropzoneArea } from "material-ui-dropzone";
+import React, { useContext, useEffect, useRef, useState } from "react";
+import { queryContext } from "../contexts/QueryContext";
+import { baseColor } from "../utils/color";
+import { delayRunFunc } from "../utils/Helper";
 
 const Setting = (props: any) => {
   const isMobile = !useMediaQuery("(min-width:1000px)");
