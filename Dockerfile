@@ -1,6 +1,7 @@
 # => Build container
 FROM node:alpine as builder
 WORKDIR /app
+RUN npm install --registry https://registry.npm.taobao.org/ -g yrm && yrm use taobao
 COPY package.json .
 RUN yarn
 COPY . .
