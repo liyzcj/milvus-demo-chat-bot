@@ -10,7 +10,8 @@ import { queryContext } from "../contexts/QueryContext";
 import { texts } from "../lan";
 
 const lanKey = window._env_ && window._env_.LAN === "cn" ? "cn" : "en";
-const { tip, week, placeholder, notEmpty } = texts[lanKey];
+const { tip, week, placeholder, notEmpty , answerHint, questionNotFound} = texts[lanKey];
+
 
 const QA = (props) => {
   const textArea = useRef(null);
@@ -27,6 +28,7 @@ const QA = (props) => {
   const [message, setMessage] = useState("");
   const isMobile = props.isMobile;
   const { search } = useContext(queryContext);
+  const { answer } = useContext(queryContext);
 
   const useStyles = makeStyles({
     wrapper: {
@@ -114,6 +116,53 @@ const QA = (props) => {
   });
   const classes = useStyles({});
 
+  const handleClick = (e) => {
+    e.preventDefault();
+    setQaList((list) => {
+      return [
+        ...list,
+        { type: "answer", loading: true, text: "" },
+      ];
+    });
+
+    answer(e.target.text).then((res) => {
+      const { status, data } = res || {};
+      if (status === 200 ) {
+
+        setQaList((list) => {
+          return list.map((v) => {
+            if (v.loading) {
+              v.loading = false;
+              v.text = data.msg;
+            }
+            return v;
+          });
+        });
+      }
+    })
+  }
+
+  function QuestionList(props) {
+
+    if (typeof props.questions == "string") {
+      return questionNotFound
+    }
+    let i = 0;
+    const questionList = props.questions.map((question) => (
+      <li key={i++}>
+        <a href="/#" onClick={handleClick}>{question}</a>
+      </li>)
+    )
+    return (
+      <div>
+        {answerHint}
+        <ol>
+          {questionList}
+        </ol>
+      </div>
+    )
+  }
+
   const handleSend = (e) => {
     const value = textArea.current.value;
     if (!value.trim()) {
@@ -134,14 +183,16 @@ const QA = (props) => {
         { type: "answer", loading: true, text: "" },
       ];
     });
-    search({ query_text: value }).then((res) => {
+
+    search(value).then((res) => {
       const { status, data } = res || {};
-      if (status === 200) {
+      if (status === 200 ) {
+
         setQaList((list) => {
           return list.map((v) => {
             if (v.loading) {
               v.loading = false;
-              v.text = data;
+              v.text = <QuestionList questions = {data.msg} />;
             }
             return v;
           });
@@ -203,7 +254,7 @@ const QA = (props) => {
                       style={{ color: "#333" }}
                     ></CircularProgress>
                   ) : (
-                    <p>{v.text}</p>
+                    <div>{v.text}</div>
                   )}
                 </div>
               </div>

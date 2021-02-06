@@ -1,5 +1,5 @@
-import React, { FC, createContext, ReactNode } from "react";
 import axios from "axios";
+import React, { createContext, FC, ReactNode } from "react";
 import * as URL from "../utils/Endpoints";
 
 const axiosInstance = axios.create();
@@ -11,22 +11,19 @@ const QueryProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const errorParser = (e: any) => {
     console.log(e);
   };
-  const process = async (params: any) => {
-    const url = URL.Processing;
-    return await axiosInstance.get(url, params).catch(errorParser);
-  };
-  const count = async (params: any) => {
-    const url = URL.Count;
-    return await axiosInstance.post(url, params).catch(errorParser);
-  };
-  const train = async (params: any) => {
-    const url = URL.Train;
+
+  const load = async (params: any) => {
+    const url = URL.Load;
     return await axiosInstance.post(url, params).catch(errorParser);
   };
 
-  const search = async (params: any) => {
-    const url = URL.Search;
-    return await axiosInstance.post(url, params).catch(errorParser);
+  const answer = async (question: any) => {
+    const url = URL.Answer + '?question=' + question;;
+    return await axiosInstance.get(url).catch(errorParser);
+  };
+  const search = async (question: string) => {
+    const url = URL.Search + '?question=' + question;
+    return await axiosInstance.get(url).catch(errorParser);
   };
   const clearAll = async () => {
     const url = URL.ClearAll;
@@ -36,11 +33,10 @@ const QueryProvider: FC<{ children: ReactNode }> = ({ children }) => {
   return (
     <Provider
       value={{
-        process,
-        count,
+        load,
+        answer,
         search,
         clearAll,
-        train
       }}
     >
       {children}
